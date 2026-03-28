@@ -3,6 +3,7 @@
 #include <string.h>
 #include <windows.h>
 #include <time.h>
+#include <stdlib.h> 
 
 // Estrutura do Produto conforme especificado
 typedef struct {
@@ -121,26 +122,42 @@ int main() {
     clock_t t_inicio, t_fim;
     double tempo_ms;
 
-    int id_procurado = 19000; // ID para teste
-    
+
     // Inicia a contagem antes da busca
     t_inicio = clock();
     
-    int pos = busca_sequencial(base_dados, total_dados, id_procurado);
-   
-    // Para a contagem imediatamente após a função terminar
-    t_fim = clock(); 
+    // Variáveis para os múltiplos testes
+   // --- INÍCIO DA SUBSTITUIÇÃO ---
+    int num_testes = 10; 
+    double soma_tempos = 0;
+    
+    // Alimenta a semente do gerador aleatório com o tempo atual
+    srand(time(NULL)); 
 
-    // Calcula a diferença e converte para milissegundos
-    tempo_ms = ((double)(t_fim - t_inicio) / CLOCKS_PER_SEC) * 1000;
+    printf("\nIniciando %d testes com IDs aleatórios...\n", num_testes);
 
-    printf("\nTempo gasto na busca: %.4f ms\n", tempo_ms);
+    for (int i = 0; i < num_testes; i++) {
+        // Escolhe uma posição aleatória entre 0 e o total de dados
+        int indice_aleatorio = rand() % total_dados;
+        int id_procurado = base_dados[indice_aleatorio].id;
 
-    if (pos != -1) {
-        printf("\nProduto encontrado: %s\n", base_dados[pos].nome);
-    } else {
-        printf("\nID %d não encontrado.\n", id_procurado);
+        clock_t t_inicio = clock();
+        
+        busca_sequencial(base_dados, total_dados, id_procurado);
+        
+        clock_t t_fim = clock();
+        
+        double tempo_ms = ((double)(t_fim - t_inicio) / CLOCKS_PER_SEC) * 1000.0;
+        soma_tempos += tempo_ms;
+        
+        printf("Teste %d: ID %d | Tempo: %.4f ms\n", i + 1, id_procurado, tempo_ms);
     }
+
+    double tempo_medio = soma_tempos / num_testes;
+    printf("\n--------------------------------------------------\n");
+    printf("MÉDIA DOS TESTES ALEATÓRIOS: %.4f ms\n", tempo_medio);
+    printf("--------------------------------------------------\n");
+    // --- FIM DA SUBSTITUIÇÃO ---
 
     // Se deu tudo certo, mostra os resultados
     if (base_dados != NULL) {
