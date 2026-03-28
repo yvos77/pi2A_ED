@@ -95,6 +95,16 @@ Produto* carregar_dados(const char* nome_arquivo, int* total_registros) {
     return vetor;
 }
 
+// Função de busca sequencial: percorre o vetor comparando os IDs
+int busca_sequencial(Produto* vetor, int total_registros, int id_buscado) {
+    for (int i = 0; i < total_registros; i++) {
+        if (vetor[i].id == id_buscado) {
+            return i; // Retorna a posição se encontrar o ID
+        }
+    }
+    return -1; // Retorna -1 se percorrer tudo e não encontrar nada
+}
+
 int main() {
     SetConsoleOutputCP(CP_UTF8);
 
@@ -105,6 +115,15 @@ int main() {
 
     // Executa a leitura
     Produto* base_dados = carregar_dados(arquivo_csv, &total_dados);
+    // Parte a ser colada após o carregamento dos dados:
+    int id_procurado = 529; // ID de exemplo para testar
+    int pos = busca_sequencial(base_dados, total_dados, id_procurado);
+
+    if (pos != -1) {
+        printf("\nProduto encontrado: %s\n", base_dados[pos].nome);
+    } else {
+        printf("\nID %d não encontrado.\n", id_procurado);
+    }
 
     // Se deu tudo certo, mostra os resultados
     if (base_dados != NULL) {
