@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
+#include <time.h>
 
 // Estrutura do Produto conforme especificado
 typedef struct {
@@ -116,8 +117,24 @@ int main() {
     // Executa a leitura
     Produto* base_dados = carregar_dados(arquivo_csv, &total_dados);
     // Parte a ser colada após o carregamento dos dados:
-    int id_procurado = 529; // ID de exemplo para testar
+    // Declara as variáveis de tempo
+    clock_t t_inicio, t_fim;
+    double tempo_ms;
+
+    int id_procurado = 19000; // ID para teste
+    
+    // Inicia a contagem antes da busca
+    t_inicio = clock();
+    
     int pos = busca_sequencial(base_dados, total_dados, id_procurado);
+   
+    // Para a contagem imediatamente após a função terminar
+    t_fim = clock(); 
+
+    // Calcula a diferença e converte para milissegundos
+    tempo_ms = ((double)(t_fim - t_inicio) / CLOCKS_PER_SEC) * 1000;
+
+    printf("\nTempo gasto na busca: %.4f ms\n", tempo_ms);
 
     if (pos != -1) {
         printf("\nProduto encontrado: %s\n", base_dados[pos].nome);
