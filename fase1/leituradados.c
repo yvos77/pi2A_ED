@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <windows.h>
 
 // Estrutura do Produto conforme especificado
 typedef struct {
@@ -95,6 +96,8 @@ Produto* carregar_dados(const char* nome_arquivo, int* total_registros) {
 }
 
 int main() {
+    SetConsoleOutputCP(CP_UTF8);
+
     int total_dados = 0;
     
     // Nome do arquivo atualizado para o que você fez upload
