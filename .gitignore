@@ -1,0 +1,7 @@
+# Dataset
+data/*.csv
+
+# Binários
+programa
+*.exe
+*.o
