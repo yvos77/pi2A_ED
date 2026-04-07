@@ -4,7 +4,7 @@
 
 int main(void) {
     int total = 0;
-    Produto *produtos = ler_csv("data/produtos.csv", &total);
+    Produto *produtos = ler_csv("data/dataset2.csv", &total);
 
     if (!produtos) {
         return EXIT_FAILURE;
