@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c99
-SRC = src/main.c src/csv_reader.c
+SRC = src/main.c src/csv_reader.c src/vetor.c
 OUT = programa
 
 all:
