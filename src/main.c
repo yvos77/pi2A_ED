@@ -20,6 +20,16 @@ int main(void) {
                produtos[i].valor);
     }
 
+    printf("\n--- Validacao do Vetor Dinamico ---\n");
+    printf("Capacidade inicial: 100\n");
+    printf("Total de registros armazenados: %d\n", total);
+    int realocacoes = 0;
+    int cap = 100;
+    while (cap < total) { cap *= 2; realocacoes++; }
+    printf("Numero aproximado de realocacoes: %d\n", realocacoes);
+    printf("Primeiro registro: [%d] %s\n", produtos[0].id, produtos[0].nome);
+    printf("Ultimo registro:   [%d] %s\n", produtos[total-1].id, produtos[total-1].nome);
+
     free(produtos);
     return EXIT_SUCCESS;
 }
