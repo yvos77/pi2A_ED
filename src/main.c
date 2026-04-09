@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "csv_reader.h"
 #include "busca.h"
+#include "tempo.h"
 
 int main(void) {
     int total = 0;
@@ -24,28 +25,57 @@ int main(void) {
     printf("Ultimo registro:   [%d] %s\n", produtos[total-1].id, produtos[total-1].nome);
 
     printf("\n--- Teste da Busca Sequencial ---\n");
+    int idx;
 
-    // Busca no início
-    int idx = busca_sequencial(produtos, total, produtos[0].id);
+    idx = busca_sequencial(produtos, total, produtos[0].id);
     printf("Busca inicio  - id %d: %s (indice %d)\n",
            produtos[0].id, idx >= 0 ? "ENCONTRADO" : "NAO ENCONTRADO", idx);
 
-    // Busca no meio
-    int id_meio = produtos[total/2].id;
-    idx = busca_sequencial(produtos, total, id_meio);
+    idx = busca_sequencial(produtos, total, produtos[total/2].id);
     printf("Busca meio    - id %d: %s (indice %d)\n",
-           id_meio, idx >= 0 ? "ENCONTRADO" : "NAO ENCONTRADO", idx);
+           produtos[total/2].id, idx >= 0 ? "ENCONTRADO" : "NAO ENCONTRADO", idx);
 
-    // Busca no final
-    int id_fim = produtos[total-1].id;
-    idx = busca_sequencial(produtos, total, id_fim);
+    idx = busca_sequencial(produtos, total, produtos[total-1].id);
     printf("Busca final   - id %d: %s (indice %d)\n",
-           id_fim, idx >= 0 ? "ENCONTRADO" : "NAO ENCONTRADO", idx);
+           produtos[total-1].id, idx >= 0 ? "ENCONTRADO" : "NAO ENCONTRADO", idx);
 
-    // Busca inexistente
     idx = busca_sequencial(produtos, total, -1);
     printf("Busca inexist - id %d: %s (indice %d)\n",
            -2, idx >= 0 ? "ENCONTRADO" : "NAO ENCONTRADO", idx);
+
+    printf("\n--- Medicao de Tempo ---\n");
+
+    // Teste início
+    clock_t inicio = tempo_iniciar();
+    for (int i = 0; i < 1000; i++)
+        busca_sequencial(produtos, total, produtos[0].id);
+    ResultadoTempo r1 = tempo_calcular_medio(tempo_finalizar(inicio), 1000);
+    printf("Busca no inicio:\n");
+    tempo_imprimir(r1);
+
+    // Teste meio
+    inicio = tempo_iniciar();
+    for (int i = 0; i < 1000; i++)
+        busca_sequencial(produtos, total, produtos[total/2].id);
+    ResultadoTempo r2 = tempo_calcular_medio(tempo_finalizar(inicio), 1000);
+    printf("\nBusca no meio:\n");
+    tempo_imprimir(r2);
+
+    // Teste final
+    inicio = tempo_iniciar();
+    for (int i = 0; i < 1000; i++)
+        busca_sequencial(produtos, total, produtos[total-1].id);
+    ResultadoTempo r3 = tempo_calcular_medio(tempo_finalizar(inicio), 1000);
+    printf("\nBusca no final:\n");
+    tempo_imprimir(r3);
+
+    // Teste inexistente
+    inicio = tempo_iniciar();
+    for (int i = 0; i < 1000; i++)
+        busca_sequencial(produtos, total, -1);
+    ResultadoTempo r4 = tempo_calcular_medio(tempo_finalizar(inicio), 1000);
+    printf("\nBusca inexistente:\n");
+    tempo_imprimir(r4);
 
     free(produtos);
     return EXIT_SUCCESS;
