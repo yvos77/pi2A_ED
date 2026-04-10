@@ -30,6 +30,7 @@ Implementação e análise experimental da busca sequencial sobre um vetor dinâ
 
 ## 📁 Estrutura do Projeto
 
+```bash
 projeto/
 ├── data/
 │   └── dataset2.csv        ← dataset (ignorado pelo .gitignore)
@@ -43,6 +44,7 @@ projeto/
 ├── Makefile
 ├── README.md
 └── RELATORIO.md            ← relatório técnico completo
+```
 
 ---
 
