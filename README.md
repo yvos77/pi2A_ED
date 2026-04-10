@@ -2,7 +2,7 @@
 ## Análise de Desempenho da Busca Sequencial
 
 **Disciplina:** Estrutura de Dados  
-**Data:** abril de 2026
+**Data:** 1º Bimestre do 1º semestre letivo de 2026
 
 ---
 
