@@ -24,6 +24,28 @@ void imprimir_teste(const char *descricao, double tempo_total) {
     tempo_imprimir(r);
 }
 
+void executar_experimento(Produto *produtos, int total) {
+    printf("\n==============================================\n");
+    printf("Experimento com %d registros\n", total);
+    printf("==============================================\n");
+
+    int id_inicio     = produtos[0].id;
+    int id_meio       = produtos[total/2].id;
+    int id_final      = produtos[total-1].id;
+    int id_inexistente = -1;
+
+    double t_inicio     = executar_teste(produtos, total, id_inicio);
+    double t_meio       = executar_teste(produtos, total, id_meio);
+    double t_final      = executar_teste(produtos, total, id_final);
+    double t_inexistente = executar_teste(produtos, total, id_inexistente);
+
+    printf("\n%-35s %15s %20s\n", "Cenario", "Tempo Total(s)", "Tempo Medio(s)");
+    printf("%-35s %15.6f %20.9f\n", "Inicio",      t_inicio,       t_inicio      / NUM_BUSCAS);
+    printf("%-35s %15.6f %20.9f\n", "Meio",        t_meio,         t_meio        / NUM_BUSCAS);
+    printf("%-35s %15.6f %20.9f\n", "Final",       t_final,        t_final       / NUM_BUSCAS);
+    printf("%-35s %15.6f %20.9f\n", "Inexistente", t_inexistente,  t_inexistente / NUM_BUSCAS);
+}
+
 int main(void) {
     int total = 0;
     Produto *produtos = ler_csv("data/dataset2.csv", &total);
@@ -63,27 +85,18 @@ int main(void) {
     printf("Busca inexist - id %d: %s (indice %d)\n",
            -1, idx >= 0 ? "ENCONTRADO" : "NAO ENCONTRADO", idx);
 
-    printf("\n--- Multiplos Testes (protocolo: %d buscas x %d repeticoes) ---\n",
-           NUM_BUSCAS, NUM_REPETICOES);
+    // Experimentos com diferentes tamanhos
+    printf("\n\n========================================\n");
+    printf("EXPERIMENTOS COM DIFERENTES TAMANHOS\n");
+    printf("Protocolo: %d buscas x %d repeticoes\n", NUM_BUSCAS, NUM_REPETICOES);
+    printf("========================================\n");
 
-    double t_inicio = executar_teste(produtos, total, produtos[0].id);
-    imprimir_teste("Busca no inicio (media de 3 repeticoes):", t_inicio);
+    int tamanhos[] = {total/4, total/2, (3*total)/4, total};
+    int num_tamanhos = 4;
 
-    double t_meio = executar_teste(produtos, total, produtos[total/2].id);
-    imprimir_teste("Busca no meio (media de 3 repeticoes):", t_meio);
-
-    double t_final = executar_teste(produtos, total, produtos[total-1].id);
-    imprimir_teste("Busca no final (media de 3 repeticoes):", t_final);
-
-    double t_inexistente = executar_teste(produtos, total, -1);
-    imprimir_teste("Busca inexistente (media de 3 repeticoes):", t_inexistente);
-
-    printf("\n--- Resumo Geral ---\n");
-    printf("%-35s %15s %20s\n", "Cenario", "Tempo Total(s)", "Tempo Medio(s)");
-    printf("%-35s %15.6f %20.9f\n", "Inicio",      t_inicio,      t_inicio      / NUM_BUSCAS);
-    printf("%-35s %15.6f %20.9f\n", "Meio",        t_meio,        t_meio        / NUM_BUSCAS);
-    printf("%-35s %15.6f %20.9f\n", "Final",       t_final,       t_final       / NUM_BUSCAS);
-    printf("%-35s %15.6f %20.9f\n", "Inexistente", t_inexistente, t_inexistente / NUM_BUSCAS);
+    for (int t = 0; t < num_tamanhos; t++) {
+        executar_experimento(produtos, tamanhos[t]);
+    }
 
     free(produtos);
     return EXIT_SUCCESS;
