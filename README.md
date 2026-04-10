@@ -2,7 +2,7 @@
 ## Análise de Desempenho da Busca Sequencial
 
 **Disciplina:** Estrutura de Dados  
-**Data:** abril de 2026
+**Data:** 1º Bimestre do 1º semestre letivo de 2026
 
 ---
 
@@ -14,6 +14,7 @@ Implementação e análise experimental da busca sequencial sobre um vetor dinâ
 
 ## 📁 Estrutura do Projeto
 
+```bash
 projeto/
 ├── data/
 │   └── dataset2.csv        ← dataset (ignorado pelo .gitignore)
@@ -27,6 +28,7 @@ projeto/
 ├── Makefile
 ├── README.md
 └── RELATORIO.md            ← relatório técnico completo
+```
 
 ---
 
