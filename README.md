@@ -113,7 +113,3 @@ make clean
 O tempo de busca cresce linearmente com o tamanho do vetor, confirmando a complexidade **O(n)** da busca sequencial.
 
 ---
-
-## 📄 Relatório Técnico
-
-O relatório técnico completo está disponível em [`RELATORIO.md`](./RELATORIO.md).
