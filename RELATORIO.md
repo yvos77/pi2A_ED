@@ -47,34 +47,34 @@ typedef struct {
 
 Os testes seguiram o seguinte protocolo:
 
-- O vetor foi completamente carregado antes do início das medições
-- Foram realizadas **1.000 buscas consecutivas** por cenário
-- Os testes foram **repetidos 3 vezes**, sendo apresentada a média
-- A medição de tempo utilizou a função `clock()` da biblioteca `<time.h>`
+- O vetor foi completamente carregado antes do início das medições.
+- Foram selecionados **1.000 IDs** distribuídos em quatro categorias (detalhadas abaixo), usando espaçamento uniforme dentro de cada região do vetor.
+- O mesmo conjunto de 1.000 IDs foi buscado **3 vezes consecutivas** com os exatos mesmos IDs.
+- O `clock()` foi medido **individualmente para cada busca** e acumulado.
+- O **tempo médio por busca** foi calculado dividindo o tempo total acumulado pelo número total de execuções (1.000 × 3 = 3.000).
+- Um arquivo `resultados.txt` é gerado com o log completo de cada busca (ID e tempo individual) nas 3 repetições.
 
-### 3.2 Cenários de Busca
+### 3.2 Distribuição dos 1.000 IDs
 
-| Cenário | Descrição |
-|---------|-----------|
-| Início | Elemento no índice 0 do vetor |
-| Meio | Elemento no índice central do vetor |
-| Final | Elemento no último índice do vetor |
-| Inexistente | Elemento com `id = -1` (não presente no vetor) |
+| Categoria | Quantidade | Região do vetor |
+|-----------|-----------|-----------------|
+| Início | 200 | Índices `[0, total/3)` |
+| Meio | 300 | Índices `[total/3, 2×total/3)` |
+| Final | 400 | Índices `[2×total/3, total)` |
+| Inexistentes | 100 | IDs negativos (`-1` a `-100`) |
+| **Total** | **1.000** | — |
 
-### 3.3 Experimentos com Diferentes Tamanhos
+Os IDs de cada região foram selecionados de forma **uniformemente espaçada** dentro do intervalo correspondente, garantindo cobertura representativa de toda a região.
 
-Para analisar a relação entre tamanho do vetor e tempo de busca, os testes foram executados com quatro subconjuntos do dataset:
+### 3.3 Dataset Utilizado
 
-| Experimento | Tamanho |
-|-------------|---------|
-| 25% | 50.000 registros |
-| 50% | 100.001 registros |
-| 75% | 150.002 registros |
-| 100% | 200.003 registros |
+Os testes foram realizados sobre o dataset completo com **200.003 registros**, sem subdivisões por tamanho.
 
 ---
 
 ## 4. Resultados Obtidos
+
+> *(A ser preenchido pelo Contribuidor 2 após execução do programa.)*
 
 ### 4.1 Validação do Vetor Dinâmico
 
@@ -82,77 +82,20 @@ Para analisar a relação entre tamanho do vetor e tempo de busca, os testes for
 |----------|-------|
 | Capacidade inicial | 100 |
 | Total de registros armazenados | 200.003 |
-| Número de realocações | 11 |
+| Número aproximado de realocações | 11 |
 
-### 4.2 Resultados por Tamanho de Entrada
+### 4.2 Resultados — Dataset Completo
 
-#### 25% — 50.000 registros
-
-| Cenário | Tempo Total (s) | Tempo Médio (s) |
-|---------|----------------|-----------------|
-| Início | 0.000009 | 0.000000009 |
-| Meio | 0.146211 | 0.000146211 |
-| Final | 0.627075 | 0.000627075 |
-| Inexistente | 0.693520 | 0.000693520 |
-
-#### 50% — 100.001 registros
-
-| Cenário | Tempo Total (s) | Tempo Médio (s) |
-|---------|----------------|-----------------|
-| Início | 0.000008 | 0.000000008 |
-| Meio | 0.778666 | 0.000778666 |
-| Final | 1.656987 | 0.001656987 |
-| Inexistente | 1.379244 | 0.001379244 |
-
-#### 75% — 150.002 registros
-
-| Cenário | Tempo Total (s) | Tempo Médio (s) |
-|---------|----------------|-----------------|
-| Início | 0.000009 | 0.000000009 |
-| Meio | 1.003548 | 0.001003548 |
-| Final | 2.023789 | 0.002023789 |
-| Inexistente | 2.032740 | 0.002032740 |
-
-#### 100% — 200.003 registros
-
-| Cenário | Tempo Total (s) | Tempo Médio (s) |
-|---------|----------------|-----------------|
-| Início | 0.000008 | 0.000000008 |
-| Meio | 1.406636 | 0.001406636 |
-| Final | 2.687563 | 0.002687563 |
-| Inexistente | 2.725924 | 0.002725924 |
+*(pendente)*
 
 ---
 
 ## 5. Análise Preliminar
 
-### 5.1 Comportamento Observado
-
-Os resultados confirmam o comportamento esperado da busca sequencial. O tempo de busca cresce proporcionalmente à posição do elemento no vetor: elementos no início são encontrados quase instantaneamente, enquanto elementos no final ou inexistentes exigem a varredura de todo o vetor.
-
-### 5.2 Relação entre Tamanho do Vetor e Tempo de Busca
-
-A tabela abaixo resume o tempo de busca no pior caso (elemento no final) para cada tamanho:
-
-| Tamanho | Tempo Final (s) | Fator de crescimento |
-|---------|----------------|----------------------|
-| 50.000 | 0.000627 | — |
-| 100.001 | 0.001657 | ~2.6x |
-| 150.002 | 0.002024 | ~3.2x |
-| 200.003 | 0.002688 | ~4.3x |
-
-O crescimento do tempo de busca acompanha o crescimento do vetor, evidenciando a complexidade **O(n)** da busca sequencial.
-
-### 5.3 Limitações da Busca Sequencial
-
-- **Ineficiência em grandes volumes:** com 200.003 registros, cada busca no pior caso leva ~2.7ms, o que é inaceitável em sistemas de alta demanda.
-- **Ausência de pré-requisitos:** apesar de não exigir ordenação, isso impossibilita otimizações como a busca binária.
-- **Escalabilidade limitada:** o tempo cresce linearmente com o tamanho dos dados, tornando a estrutura inadequada para datasets maiores.
-
-Esses fatores motivam a implementação de estruturas mais eficientes, como a **Tabela Hash**, prevista para a Fase II do projeto.
+> *(A ser preenchido pelo Contribuidor 2.)*
 
 ---
 
 ## 6. Conclusão Parcial
 
-A busca sequencial cumpre seu papel como baseline experimental. Os resultados obtidos demonstram claramente seu comportamento linear e suas limitações, fornecendo uma base sólida para comparação com a Tabela Hash na próxima fase.
+> *(A ser preenchido pelo Contribuidor 2.)*
