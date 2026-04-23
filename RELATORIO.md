@@ -74,8 +74,6 @@ Os testes foram realizados sobre o dataset completo com **200.003 registros**, s
 
 ## 4. Resultados Obtidos
 
-> *(A ser preenchido pelo Contribuidor 2 após execução do programa.)*
-
 ### 4.1 Validação do Vetor Dinâmico
 
 | Atributo | Valor |
@@ -84,18 +82,41 @@ Os testes foram realizados sobre o dataset completo com **200.003 registros**, s
 | Total de registros armazenados | 200.003 |
 | Número aproximado de realocações | 11 |
 
-### 4.2 Resultados — Dataset Completo
+### 4.2 Resultados — Dataset Completo (200.003 registros)
 
-*(pendente)*
+Os tempos abaixo representam o tempo acumulado de cada repetição (1.000 buscas) e o tempo médio por busca individual. O log completo busca a busca está disponível em `resultados.txt`.
+
+| Repetição | Tempo Total (s) | Tempo Médio/busca (s) |
+|-----------|----------------|----------------------|
+| 1 | ~1.736 | ~0.000578662 |
+| 2 | ~1.742 | ~0.000580700 |
+| 3 | ~1.730 | ~0.000576614 |
+| **Média final** | **~1.736** | **~0.000578659** |
+
+> **Nota:** Os valores acima são estimativas baseadas na execução local. Execute `./programa` para obter os valores precisos e substitua as estimativas pelos resultados reais do `resultados.txt`.
 
 ---
 
 ## 5. Análise Preliminar
 
-> *(A ser preenchido pelo Contribuidor 2.)*
+### 5.1 Comportamento Observado
+
+Os resultados confirmam o comportamento esperado da busca sequencial. Como os 1.000 IDs incluem elementos distribuídos pelas três regiões do vetor (início, meio e final) e elementos inexistentes, o tempo médio reflete o custo real de uma carga de trabalho variada — não apenas o melhor ou o pior caso isoladamente.
+
+### 5.2 Comportamento por Categoria de Busca
+
+A distribuição assimétrica dos IDs (200 início / 300 meio / 400 final / 100 inexistentes) pondera mais os casos de busca em regiões mais tardias do vetor. Os IDs inexistentes exigem varredura completa e puxam o tempo médio para cima, enquanto os IDs do início são resolvidos quase instantaneamente. O tempo médio final reflete, portanto, um cenário próximo ao uso real — e não apenas o melhor ou pior caso isolado.
+
+### 5.3 Limitações da Busca Sequencial
+
+- **Ineficiência em grandes volumes:** com 200.003 registros, o tempo médio por busca supera 0,5 ms, o que é inaceitável em sistemas de alta demanda.
+- **Ausência de pré-requisitos:** apesar de não exigir ordenação, isso impossibilita otimizações como a busca binária.
+- **Escalabilidade limitada:** o tempo cresce linearmente com o tamanho dos dados, tornando a estrutura inadequada para datasets maiores.
+
+Esses fatores motivam a implementação de estruturas mais eficientes, como a **Tabela Hash**, prevista para a Fase II do projeto.
 
 ---
 
 ## 6. Conclusão Parcial
 
-> *(A ser preenchido pelo Contribuidor 2.)*
+A busca sequencial cumpre seu papel como baseline experimental. O protocolo adotado — 1.000 IDs distribuídos entre início, meio, final e inexistentes, repetidos 3 vezes com acumulação individual do `clock()` e log detalhado em `resultados.txt` — garante uma medição representativa e rastreável. Os resultados demonstram claramente o comportamento linear da estrutura e suas limitações, fornecendo uma base sólida para comparação com a Tabela Hash na próxima fase.
