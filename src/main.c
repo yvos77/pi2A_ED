@@ -24,8 +24,6 @@
 #define NUM_BUSCAS     (N_INICIO + N_MEIO + N_FINAL + N_INEXISTENTE) /* 1000 */
 #define NUM_REPETICOES 3
 
-/* Preenche 'ids' com 'n' índices uniformemente espaçados no intervalo [lo, hi).
- * Usa os ids reais dos produtos naquelas posições. */
 static void selecionar_ids(int *ids, int n, Produto *produtos, int lo, int hi) {
     for (int i = 0; i < n; i++) {
         int idx = lo + (int)((long long)i * (hi - lo) / n);
@@ -33,25 +31,56 @@ static void selecionar_ids(int *ids, int n, Produto *produtos, int lo, int hi) {
     }
 }
 
-/* Monta o array completo de 1000 IDs a buscar. */
 static void montar_ids(int ids[NUM_BUSCAS], Produto *produtos, int total) {
     int r1 = total / 3;
     int r2 = (2 * total) / 3;
 
-    selecionar_ids(ids,                            N_INICIO,     produtos, 0,  r1);
-    selecionar_ids(ids + N_INICIO,                 N_MEIO,       produtos, r1, r2);
-    selecionar_ids(ids + N_INICIO + N_MEIO,        N_FINAL,      produtos, r2, total);
+    selecionar_ids(ids,                            N_INICIO,      produtos, 0,  r1);
+    selecionar_ids(ids + N_INICIO,                 N_MEIO,        produtos, r1, r2);
+    selecionar_ids(ids + N_INICIO + N_MEIO,        N_FINAL,       produtos, r2, total);
 
     for (int i = 0; i < N_INEXISTENTE; i++)
         ids[N_INICIO + N_MEIO + N_FINAL + i] = -(i + 1);
 }
 
-/* TODO (Contribuidor 2): implementar o loop de buscas com clock() individual
- * por busca, escrita do log busca a busca em 'log', e armazenamento do tempo
- * de cada repetição em tempos_rep[].
- * Retorna o tempo total acumulado nas 3 repetições. */
+/*
+ * Executa as 3 repetições sobre o mesmo conjunto de 1000 IDs.
+ * O clock() é iniciado e finalizado para cada busca individualmente,
+ * e os tempos são somados — conforme orientação do professor.
+ * Armazena o tempo de cada repetição em tempos_rep[].
+ * Grava o log detalhado de cada busca em 'log'.
+ * Retorna o tempo total acumulado nas 3 repetições.
+ */
 static double executar_buscas(Produto *produtos, int total, int ids[NUM_BUSCAS],
-                               double tempos_rep[NUM_REPETICOES], FILE *log);
+                               double tempos_rep[NUM_REPETICOES], FILE *log) {
+    double tempo_total = 0.0;
+
+    for (int rep = 0; rep < NUM_REPETICOES; rep++) {
+        double tempo_rep = 0.0;
+
+        fprintf(log, "========================================\n");
+        fprintf(log, "REPETICAO %d\n", rep + 1);
+        fprintf(log, "========================================\n");
+        fprintf(log, "%-6s  %-12s  %s\n", "Busca", "ID", "Tempo (s)");
+        fprintf(log, "------  ------------  ----------------\n");
+
+        for (int i = 0; i < NUM_BUSCAS; i++) {
+            clock_t inicio = tempo_iniciar();
+            busca_sequencial(produtos, total, ids[i]);
+            double t = tempo_finalizar(inicio);
+            tempo_rep += t;
+            fprintf(log, "%-6d  %-12d  %.9f\n", i + 1, ids[i], t);
+        }
+
+        fprintf(log, "\nTotal da repeticao %d: %.6f s  |  Medio: %.9f s\n\n",
+                rep + 1, tempo_rep, tempo_rep / NUM_BUSCAS);
+
+        tempos_rep[rep] = tempo_rep;
+        tempo_total += tempo_rep;
+    }
+
+    return tempo_total;
+}
 
 void executar_experimento(Produto *produtos, int total) {
     printf("\n==============================================\n");
