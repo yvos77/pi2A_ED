@@ -4,19 +4,6 @@
 #include "busca.h"
 #include "tempo.h"
 
-/*
- * Protocolo experimental:
- *   - 1000 IDs no total, distribuídos em 4 categorias:
- *       200 do início      (índices [0,          total/3)      )
- *       300 do meio        (índices [total/3,     2*total/3)    )
- *       400 do final       (índices [2*total/3,   total)        )
- *       100 inexistentes   (ids -1 a -100, garantidamente ausentes)
- *   - IDs de cada região selecionados de forma uniformemente espaçada.
- *   - O mesmo conjunto de 1000 IDs é buscado 3 vezes (repetições).
- *   - O clock() é medido individualmente por busca e acumulado.
- *   - Tempo médio = tempo total acumulado / (1000 * 3).
- */
-
 #define N_INICIO       200
 #define N_MEIO         300
 #define N_FINAL        400
@@ -43,14 +30,6 @@ static void montar_ids(int ids[NUM_BUSCAS], Produto *produtos, int total) {
         ids[N_INICIO + N_MEIO + N_FINAL + i] = -(i + 1);
 }
 
-/*
- * Executa as 3 repetições sobre o mesmo conjunto de 1000 IDs.
- * O clock() é iniciado e finalizado para cada busca individualmente,
- * e os tempos são somados — conforme orientação do professor.
- * Armazena o tempo de cada repetição em tempos_rep[].
- * Grava o log detalhado de cada busca em 'log'.
- * Retorna o tempo total acumulado nas 3 repetições.
- */
 static double executar_buscas(Produto *produtos, int total, int ids[NUM_BUSCAS],
                                double tempos_rep[NUM_REPETICOES], FILE *log) {
     double tempo_total = 0.0;
@@ -72,11 +51,11 @@ static double executar_buscas(Produto *produtos, int total, int ids[NUM_BUSCAS],
             fprintf(log, "%-6d  %-12d  %.9f\n", i + 1, ids[i], t);
         }
 
-        fprintf(log, "\nTotal da repeticao %d: %.6f s  |  Medio: %.9f s\n\n",
-                rep + 1, tempo_rep, tempo_rep / NUM_BUSCAS);
-
         tempos_rep[rep] = tempo_rep;
         tempo_total += tempo_rep;
+
+        fprintf(log, "\nTempo total (rep %d): %.6f s  |  Medio por busca: %.9f s\n\n",
+                rep + 1, tempo_rep, tempo_rep / NUM_BUSCAS);
     }
 
     return tempo_total;
@@ -111,26 +90,22 @@ void executar_experimento(Produto *produtos, int total) {
     fprintf(log, "========================================\n");
     fprintf(log, "RESUMO FINAL\n");
     fprintf(log, "========================================\n");
-    fprintf(log, "%-15s  %20s  %20s\n", "Repeticao", "Tempo Total (s)", "Tempo Medio (s)");
+    fprintf(log, "%-15s  %20s\n", "Repeticao", "Tempo Total (s)");
     for (int rep = 0; rep < NUM_REPETICOES; rep++) {
-        fprintf(log, "%-15d  %20.6f  %20.9f\n",
-                rep + 1, tempos_rep[rep], tempos_rep[rep] / NUM_BUSCAS);
+        fprintf(log, "%-15d  %20.6f\n", rep + 1, tempos_rep[rep]);
     }
-    double tempo_medio_final = tempo_total / (NUM_BUSCAS * NUM_REPETICOES);
-    fprintf(log, "%-15s  %20.6f  %20.9f\n",
-            "MEDIA FINAL", tempo_total / NUM_REPETICOES, tempo_medio_final);
+    double media_final = tempo_total / NUM_REPETICOES;
+    fprintf(log, "%-15s  %20.6f\n", "MEDIA FINAL", media_final);
 
     fclose(log);
     printf("\nLog detalhado salvo em: resultados.txt\n");
 
     /* Resumo no terminal */
-    printf("\n%-15s  %20s  %20s\n", "Repeticao", "Tempo Total (s)", "Tempo Medio (s)");
+    printf("\n%-15s  %20s\n", "Repeticao", "Tempo Total (s)");
     for (int rep = 0; rep < NUM_REPETICOES; rep++) {
-        printf("%-15d  %20.6f  %20.9f\n",
-               rep + 1, tempos_rep[rep], tempos_rep[rep] / NUM_BUSCAS);
+        printf("%-15d  %20.6f\n", rep + 1, tempos_rep[rep]);
     }
-    printf("\n%-15s  %20.6f  %20.9f\n",
-           "MEDIA FINAL", tempo_total / NUM_REPETICOES, tempo_medio_final);
+    printf("\n%-15s  %20.6f\n", "MEDIA FINAL", media_final);
 }
 
 int main(void) {
