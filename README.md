@@ -35,11 +35,8 @@ projeto/
 ## 🚀 Como Executar
 
 ```bash
-# Compilar
-make
-
-# Executar
-./programa
+# Compilar e executar
+make && ./programa
 
 # Limpar
 make clean
@@ -51,14 +48,7 @@ make clean
 
 ## 📊 Resultados — Resumo
 
-| Tamanho | Tempo Final (s) | Tempo Inexistente (s) |
-|---------|----------------|----------------------|
-| 50.000 | 0.000627 | 0.000694 |
-| 100.001 | 0.001657 | 0.001379 |
-| 150.002 | 0.002024 | 0.002033 |
-| 200.003 | 0.002688 | 0.002726 |
-
-O tempo de busca cresce linearmente com o tamanho do vetor, confirmando a complexidade **O(n)** da busca sequencial.
+> O tempo de busca cresce linearmente com o tamanho do vetor, confirmando a complexidade **O(n)** da busca sequencial.
 
 ---
 
