@@ -24,8 +24,68 @@ const char* hash_nome_metodo(void) {
 #endif
 }
 
-/* Stubs temporários para permitir a compilação nesta etapa */
-TabelaHash* hash_criar(int tamanho) { (void)tamanho; return NULL; }
-int hash_inserir(TabelaHash *t, Produto p) { (void)t; (void)p; return 0; }
-Produto* hash_buscar(TabelaHash *t, int id) { (void)t; (void)id; return NULL; }
-void hash_destruir(TabelaHash *t) { (void)t; }
+TabelaHash* hash_criar(int tamanho) {
+    TabelaHash *t = malloc(sizeof(TabelaHash));
+    if (!t) {
+        fprintf(stderr, "Erro: falha ao alocar TabelaHash.\n");
+        return NULL;
+    }
+
+    t->baldes = calloc((size_t)tamanho, sizeof(No *));
+    if (!t->baldes) {
+        fprintf(stderr, "Erro: falha ao alocar baldes da tabela.\n");
+        free(t);
+        return NULL;
+    }
+
+    t->tamanho = tamanho;
+    t->colisoes = 0;
+    return t;
+}
+
+int hash_inserir(TabelaHash *t, Produto p) {
+    unsigned long indice = hash_funcao(p.id, t->tamanho);
+
+    No *novo = malloc(sizeof(No));
+    if (!novo) {
+        fprintf(stderr, "Erro: falha ao alocar no da tabela.\n");
+        return -1;
+    }
+    novo->produto = p;
+
+    int houve_colisao = (t->baldes[indice] != NULL);
+    if (houve_colisao) {
+        t->colisoes++;
+    }
+
+    novo->proximo = t->baldes[indice];
+    t->baldes[indice] = novo;
+    return houve_colisao;
+}
+
+Produto* hash_buscar(TabelaHash *t, int id) {
+    unsigned long indice = hash_funcao(id, t->tamanho);
+    No *atual = t->baldes[indice];
+
+    while (atual) {
+        if (atual->produto.id == id) {
+            return &atual->produto;
+        }
+        atual = atual->proximo;
+    }
+    return NULL;
+}
+
+void hash_destruir(TabelaHash *t) {
+    if (!t) return;
+    for (int i = 0; i < t->tamanho; i++) {
+        No *atual = t->baldes[i];
+        while (atual) {
+            No *prox = atual->proximo;
+            free(atual);
+            atual = prox;
+        }
+    }
+    free(t->baldes);
+    free(t);
+}
