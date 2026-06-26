@@ -13,5 +13,8 @@ resultados_hash.txt
 *.o
 *.out
 
+# Controle de build (Makefile)
+.hash_atual
+
 # Sistema
 .DS_Store

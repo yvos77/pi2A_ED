@@ -9,13 +9,21 @@ HASH   ?= 0
 
 all: $(OUT)
 
-$(OUT): $(SRC)
+# Recompila quando o codigo mudar OU quando o valor de HASH mudar
+$(OUT): $(SRC) .hash_atual
 	$(CC) $(CFLAGS) -DHASH_METODO=$(HASH) $(SRC) -o $(OUT) -lm
+
+# Registra o ultimo HASH usado; so altera o arquivo quando HASH muda,
+# o que forca o rebuild acima sem precisar de make clean
+.hash_atual: FORCE
+	@[ "`cat $@ 2>/dev/null`" = "$(HASH)" ] || echo "$(HASH)" > $@
+
+FORCE:
 
 run: all
 	./$(OUT)
 
 clean:
-	rm -f $(OUT) resultados.txt resultados_hash.txt
+	rm -f $(OUT) resultados.txt resultados_hash.txt .hash_atual
 
-.PHONY: all run clean
+.PHONY: all run clean FORCE
