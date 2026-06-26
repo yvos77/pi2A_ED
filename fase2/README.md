@@ -17,7 +17,7 @@ O programa carrega o CSV, constrói o vetor dinâmico e a tabela hash, contabili
 ## Estrutura do Projeto
 
 ```bash
-projeto/
+fase2/
 ├── data/
 │   └── dataset2.csv        ← dataset (ignorado pelo .gitignore)
 ├── src/
