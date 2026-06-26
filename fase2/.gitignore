@@ -1,0 +1,20 @@
+# Binário
+programa
+prog_asan
+
+# Dataset (grande — distribuído à parte)
+data/*.csv
+
+# Logs gerados em tempo de execução
+resultados.txt
+resultados_hash.txt
+
+# Artefatos de compilação
+*.o
+*.out
+
+# Controle de build (Makefile)
+.hash_atual
+
+# Sistema
+.DS_Store

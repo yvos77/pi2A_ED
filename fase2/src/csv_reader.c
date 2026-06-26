@@ -22,7 +22,6 @@ Produto* ler_csv(const char *caminho, int *total) {
     char linha[LINHA_MAX];
     *total = 0;
 
-    // Pula o cabeçalho
     if (!fgets(linha, LINHA_MAX, arquivo)) {
         fprintf(stderr, "Erro: arquivo vazio ou formato invalido.\n");
         vetor_destruir(v);
@@ -52,7 +51,7 @@ Produto* ler_csv(const char *caminho, int *total) {
     fclose(arquivo);
 
     *total = v->tamanho;
-    Produto *resultado = v->dados; // transfere a posse do array
-    free(v);                       // libera só a struct, não os dados
+    Produto *resultado = v->dados;
+    free(v);
     return resultado;
 }
