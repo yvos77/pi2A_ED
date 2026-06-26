@@ -3,9 +3,9 @@
 **Projeto Integrador — Estrutura de Dados**
 **IESB — Ciência da Computação — 1º semestre de 2026**
 
-* - Yuri Victor de Oliveira e Silva // 2412130171*
-* - Felipe Oliveira Cunha // 2412130016*
-* - Gabriel Vieira Braga // 2412130033*
+* - Yuri Victor de Oliveira e Silva // 2412130171 *
+* - Felipe Oliveira Cunha // 2412130016 *
+* - Gabriel Vieira Braga // 2412130033 *
 
 ---
 
