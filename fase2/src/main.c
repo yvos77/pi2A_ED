@@ -142,17 +142,28 @@ int main(int argc, char **argv) {
     if (log) {
         fprintf(log, "LOG DE BUSCAS - TABELA HASH (Fase II)\n");
         fprintf(log, "Funcao hash: %s\n", hash_nome_metodo());
-        fprintf(log, "Dataset: %d registros | Tabela: m = %d | Colisoes: %ld\n\n",
+        fprintf(log, "Dataset: %d registros | Tabela: m = %d | Colisoes: %ld\n",
                 total, tabela->tamanho, tabela->colisoes);
-        fprintf(log, "%-6s  %-12s  %-8s  %s\n", "Busca", "ID", "Balde", "Cadeia");
-        fprintf(log, "------  ------------  --------  ------\n");
-        for (int i = 0; i < NUM_BUSCAS; i++) {
-            unsigned long b = hash_funcao(ids[i], tabela->tamanho);
-            long len = 0;
-            for (No *n = tabela->baldes[b]; n; n = n->proximo) len++;
-            fprintf(log, "%-6d  %-12d  %-8lu  %ld\n", i + 1, ids[i], b, len);
+        fprintf(log, "Protocolo: %d buscas x %d repeticoes = %d execucoes\n",
+                NUM_BUSCAS, NUM_REPETICOES, NUM_BUSCAS * NUM_REPETICOES);
+
+        for (int rep = 0; rep < NUM_REPETICOES; rep++) {
+            fprintf(log, "\n========================================\n");
+            fprintf(log, "REPETICAO %d  (bloco: %.9f s)\n", rep + 1, hash_rep[rep]);
+            fprintf(log, "========================================\n");
+            fprintf(log, "%-6s  %-12s  %-8s  %s\n", "Busca", "ID", "Balde", "Cadeia");
+            fprintf(log, "------  ------------  --------  ------\n");
+            for (int i = 0; i < NUM_BUSCAS; i++) {
+                unsigned long b = hash_funcao(ids[i], tabela->tamanho);
+                long len = 0;
+                for (No *n = tabela->baldes[b]; n; n = n->proximo) len++;
+                fprintf(log, "%-6d  %-12d  %-8lu  %ld\n", i + 1, ids[i], b, len);
+            }
         }
-        fprintf(log, "\nResumo (medias sobre %d execucoes):\n", NUM_REPETICOES * NUM_BUSCAS);
+
+        fprintf(log, "\n========================================\n");
+        fprintf(log, "RESUMO FINAL\n");
+        fprintf(log, "========================================\n");
         for (int rep = 0; rep < NUM_REPETICOES; rep++)
             fprintf(log, "Rep %d: bloco hash = %.9f s\n", rep + 1, hash_rep[rep]);
         fprintf(log, "Tempo medio por busca (hash): %.9f s\n", hash_medio_busca);
@@ -163,7 +174,25 @@ int main(int argc, char **argv) {
     FILE *logs = fopen("resultados.txt", "w");
     if (logs) {
         fprintf(logs, "LOG DE BUSCAS - BUSCA SEQUENCIAL (Fase I, re-medido)\n");
-        fprintf(logs, "Dataset: %d registros\n\n", total);
+        fprintf(logs, "Dataset: %d registros\n", total);
+        fprintf(logs, "Protocolo: %d buscas x %d repeticoes = %d execucoes\n",
+                NUM_BUSCAS, NUM_REPETICOES, NUM_BUSCAS * NUM_REPETICOES);
+
+        for (int rep = 0; rep < NUM_REPETICOES; rep++) {
+            fprintf(logs, "\n========================================\n");
+            fprintf(logs, "REPETICAO %d  (bloco: %.6f s)\n", rep + 1, seq_rep[rep]);
+            fprintf(logs, "========================================\n");
+            fprintf(logs, "%-6s  %-12s  %s\n", "Busca", "ID", "Indice");
+            fprintf(logs, "------  ------------  ------\n");
+            for (int i = 0; i < NUM_BUSCAS; i++) {
+                int idx = busca_sequencial(produtos, total, ids[i]);
+                fprintf(logs, "%-6d  %-12d  %d\n", i + 1, ids[i], idx);
+            }
+        }
+
+        fprintf(logs, "\n========================================\n");
+        fprintf(logs, "RESUMO FINAL\n");
+        fprintf(logs, "========================================\n");
         for (int rep = 0; rep < NUM_REPETICOES; rep++)
             fprintf(logs, "Rep %d: bloco sequencial = %.6f s\n", rep + 1, seq_rep[rep]);
         fprintf(logs, "Tempo medio por busca (sequencial): %.9f s\n", seq_medio_busca);
